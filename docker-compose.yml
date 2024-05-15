@@ -1,0 +1,32 @@
+version: "3.3"
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - path: .env
+        required: true
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - ./database_dump.sql:/docker-entrypoint-initdb.d/datadump.sql
+    networks:
+      - mysql-phpmyadmin
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 80:80
+    env_file:
+      - path: .env
+        required: true
+    networks:
+      - mysql-phpmyadmin
+
+networks:
+  mysql-phpmyadmin:
