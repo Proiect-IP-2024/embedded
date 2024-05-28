@@ -91,7 +91,7 @@ CREATE TABLE `Schema_medicamentatie` (
 /* !!!! */
 
 CREATE TABLE `Recomadare_medic` (
-  `id_recomandare` integer PRIMARY KEY AUTO_INCREMENT,
+  `id_recomandare` integer PRIMARY KEY,
   `CNP_pacient` varchar(20) NOT NULL,
   `tip_recomandare` varchar(50) NOT NULL,
   `durata_zilnica` integer,
@@ -100,6 +100,20 @@ CREATE TABLE `Recomadare_medic` (
 );
 
 
+CREATE TABLE `Configurare_Alerta`(
+  `id_configurare_alerta` integer PRIMARY KEY,
+  `id_medic` integer NOT NULL,
+  `CNP_pacient` varchar(13) NOT NULL,
+  `umiditate_valoare_maxima` float NOT NULL,
+  `temperatura_valoare_maxima` float NOT NULL,
+  `puls_valoare_maxima` float NOT NULL,
+  `puls_valoare_minima` float NOT NULL,
+  `umiditate_valoare_minima` float,
+  `temperatura_valoare_minima` float
+);
+
+
+/*
 CREATE TABLE `Alerta_automata` (
   `id_alerta_automata` integer PRIMARY KEY,
   `CNP_pacient` varchar(13) NOT NULL,
@@ -107,6 +121,21 @@ CREATE TABLE `Alerta_automata` (
   `mesaj_automat` text,
   `data_alerta_automata` date
 );
+*/
+
+
+CREATE TABLE `Istoric_Alerte_automate`(
+  `id_alerta_automata` integer PRIMARY KEY,
+  `data_alerta_automata` datetime NOT NULL,
+  `data_rezolvare_alerta` datetime,
+  `CNP_pacient` varchar(13) NOT NULL,
+  `umiditate` float,
+  `temperatura` float,
+  `puls` float,
+  `resolved` boolean,
+  `resolved_by` integer
+);
+
 
 CREATE TABLE `Alerta_Supraveghetor` (
   `id_alerta_upraveghetor` integer PRIMARY KEY,
@@ -130,6 +159,9 @@ CREATE TABLE `Senzor_data` (
   `validitate_lumina` integer,
   `timestamp` date
 );
+*/
+
+
 
   
 
@@ -163,6 +195,15 @@ ALTER TABLE `Consult` ADD FOREIGN KEY (`CNP_pacient`) REFERENCES `Pacient` (`CNP
 ALTER TABLE `Alerta_automata` ADD FOREIGN KEY (`CNP_pacient`) REFERENCES `Pacient` (`CNP_pacient`);
 
 ALTER TABLE `Senzor_data` ADD FOREIGN KEY (`CNP_pacient`) REFERENCES `Pacient` (`CNP_pacient`);
+
+
+
+ALTER TABLE `Configurare_Alerta` ADD FOREIGN KEY (`id_medic`) REFERENCES `Medic` (`id`);
+ALTER TABLE `Configurare_Alerta` ADD FOREIGN KEY (`CNP_pacient`) REFERENCES `Pacient` (`CNP_pacient`);
+
+ALTER TABLE `Istoric_Alerte_automate` ADD FOREIGN KEY (`CNP_pacient`) REFERENCES Pacient(`CNP_pacient`);
+ALTER TABLE `Istoric_Alerte_automate` ADD FOREIGN KEY (`resolved_by`) REFERENCES Ingrijitor(`id`);
+
 
 INSERT INTO `Users` (`id`, `first_name`, `last_name`, `email`, `password_hash`) VALUES
 (2, 'test', 'test', 'test@test.com', '$2b$10$dfDF6kGjZpMf.Yqt43xE.emJobspEO3DO.4Py.WzVi403.I49jRy6'),
@@ -202,4 +243,3 @@ INSERT INTO `Senzor_data` (`ID_senzor`, `CNP_pacient`, `valoare_puls`, `validita
 (1, '1234567890123', 123, 1, 23, 1, 13, 1, 0.2, 1, '2024-05-24');
 INSERT INTO `Tratamente` (`id_tratament`, `CNP_pacient`, `tratament`, `data_emitere`, `alte_detalii`, `bifat_supraveghetor`, `data_ora_bifare`, `observatii_ingrijitor`) VALUES
 (1, '1234567890123', '2', '2024-05-23', 'sadfg', 1, '2024-05-22 01:38:59', 'sdafgh');
-
